@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HORREX | Hariom Dhurve</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 20% 20%,#063b91 0%,transparent 35%),
+        radial-gradient(circle at 80% 30%,#001f5c 0%,transparent 40%),
+        linear-gradient(135deg,#020817,#001b44,#003b88);
+}
+
+nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 7%;
+    background:rgba(0,10,30,.9);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid #087cff;
+}
+
+.nav-logo{
+    font-size:27px;
+    font-weight:bold;
+    letter-spacing:4px;
+    color:white;
+    text-shadow:0 0 15px #008cff;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:18px;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#00aaff;
+}
+
+.hero{
+    min-height:90vh;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:50px;
+    padding:70px 8%;
+    max-width:1400px;
+    margin:auto;
+}
+
+.hero-text{
+    max-width:650px;
+}
+
+.small{
+    color:#00aaff;
+    font-size:20px;
+}
+
+.hero h1{
+    font-size:65px;
+    margin:15px 0;
+}
+
+.hero h1 span{
+    color:#008cff;
+    text-shadow:0 0 25px #008cff;
+}
+
+.hero h2{
+    color:#c9dcff;
+    margin-bottom:20px;
+}
+
+.hero p{
+    color:#a9bad6;
+    line-height:1.8;
+}
+
+.profile{
+    width:330px;
+    height:330px;
+    object-fit:cover;
+    border-radius:50%;
+    border:5px solid #008cff;
+    box-shadow:0 0 20px #008cff,0 0 60px #004cff;
+    animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+    50%{transform:translateY(-15px);}
+}
+
+.buttons{
+    margin-top:30px;
+}
+
+.btn{
+    display:inline-block;
+    padding:13px 25px;
+    margin:5px;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:bold;
+    color:white;
+    background:#006eff;
+    box-shadow:0 0 15px #006eff;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 30px #00aaff;
+}
+
+.btn.dark{
+    background:transparent;
+    border:1px solid #008cff;
+}
+
+.contact-info{
+    margin-top:25px;
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+.contact-info a{
+    color:#00aaff;
+    text-decoration:none;
+}
+
+section{
+    padding:80px 8%;
+    max-width:1300px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    font-size:40px;
+    margin-bottom:45px;
+}
+
+.title span{
+    color:#008cff;
+}
+
+.card{
+    background:rgba(0,20,55,.65);
+    border:1px solid #075dba;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 0 25px rgba(0,100,255,.15);
+}
+
+.about-text{
+    color:#b7c8df;
+    line-height:1.9;
+    font-size:17px;
+}
+
+.skills{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:15px;
+}
+
+.skill{
+    padding:22px 10px;
+    text-align:center;
+    border:1px solid #087cff;
+    border-radius:15px;
+    background:rgba(0,40,90,.6);
+    transition:.3s;
+}
+
+.skill:hover{
+    transform:translateY(-7px);
+    box-shadow:0 0 25px #006eff;
+}
+
+.projects{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
+}
+
+.project{
+    background:rgba(0,20,55,.7);
+    border:1px solid #075dba;
+    border-radius:18px;
+    padding:25px;
+    transition:.3s;
+}
+
+.project:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 25px #006eff;
+}
+
+.project h3{
+    color:#00aaff;
+    margin-bottom:12px;
+}
+
+.project p{
+    color:#a9bad6;
+    line-height:1.6;
+}
+
+.contact-box{
+    text-align:center;
+}
+
+.phone{
+    display:inline-block;
+    margin:20px 0;
+    font-size:24px;
+    color:#00aaff;
+    text-decoration:none;
+}
+
+.instagram{
+    display:inline-block;
+    color:#ff5ca8;
+    font-size:20px;
+    text-decoration:none;
+    margin-bottom:25px;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#7d91b0;
+    border-top:1px solid #075dba;
+    background:#010b1d;
+}
+
+@media(max-width:700px){
+
+    nav{
+        padding:15px;
+    }
+
+    nav a{
+        margin-left:6px;
+        font-size:12px;
+    }
+
+    .hero{
+        flex-direction:column-reverse;
+        text-align:center;
+        padding:50px 20px;
+    }
+
+    .profile{
+        width:240px;
+        height:240px;
+    }
+
+    .hero h1{
+        font-size:43px;
+    }
+
+    .contact-info{
+        justify-content:center;
+    }
+
+    .title{
+        font-size:32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="nav-logo">⚡ HORREX</div>
+
+    <div>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+    </div>
+</nav>
+
+
+<section class="hero" id="home">
+
+    <div class="hero-text">
+
+        <div class="small">Hello, I'm 👋</div>
+
+        <h1>
+            Hariom <span>Dhurve</span>
+        </h1>
+
+        <h2>Coder • Developer • Tech Enthusiast</h2>
+
+        <p>
+            I am learning programming and web development.
+            I love creating websites, learning new technologies
+            and building creative digital projects.
+        </p>
+
+        <div class="buttons">
+
+            <a href="#projects" class="btn">
+                🚀 View Projects
+            </a>
+
+            <a href="#contact" class="btn dark">
+                📞 Contact Me
+            </a>
+
+        </div>
+
+        <div class="contact-info">
+
+            <a href="tel:8817167823">
+                📱 8817167823
+            </a>
+
+            <a href="https://instagram.com/hariom_x_98"
+               target="_blank">
+                📸 Instagram
+            </a>
+
+        </div>
+
+    </div>
+
+    <img src="profile.jpg"
+         class="profile"
+         alt="Hariom Dhurve">
+
+</section>
+
+
+<section id="about">
+
+    <h2 class="title">
+        About <span>Me</span>
+    </h2>
+
+    <div class="card">
+
+        <p class="about-text">
+
+            Hello! My name is Hariom Dhurve.
+            I am a passionate learner interested in coding,
+            web development and technology.
+
+            <br><br>
+
+            My goal is to improve my programming skills,
+            create useful projects and become a professional
+            software developer.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<section id="skills">
+
+    <h2 class="title">
+        My <span>Skills</span>
+    </h2>
+
+    <div class="skills">
+
+        <div class="skill">🌐 HTML</div>
+        <div class="skill">🎨 CSS</div>
+        <div class="skill">⚡ JavaScript</div>
+        <div class="skill">🐍 Python</div>
+        <div class="skill">💻 C++</div>
+        <div class="skill">☕ Java</div>
+        <div class="skill">🔷 VB.NET</div>
+        <div class="skill">🗄️ SQL</div>
+
+    </div>
+
+</section>
+
+
+<section id="projects">
+
+    <h2 class="title">
+        My <span>Projects</span>
+    </h2>
+
+    <div class="projects">
+
+        <div class="project">
+            <h3>🌐 HORREX Website</h3>
+            <p>
+                My personal portfolio website built
+                using HTML and CSS.
+            </p>
+        </div>
+
+        <div class="project">
+            <h3>🧮 Calculator</h3>
+            <p>
+                A simple calculator project
+                for practicing programming.
+            </p>
+        </div>
+
+        <div class="project">
+            <h3>📝 To-Do List</h3>
+            <p>
+                A task management project
+                using web technologies.
+            </p>
+        </div>
+
+        <div class="project">
+            <h3>💡 Future Project</h3>
+            <p>
+                More creative coding projects
+                will be added here.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="contact">
+
+    <h2 class="title">
+        Contact <span>Me</span>
+    </h2>
+
+    <div class="card contact-box">
+
+        <h2>Let's Connect 🤝</h2>
+
+        <p class="about-text">
+            Have a project idea or want to connect?
+            Feel free to contact me.
+        </p>
+
+        <a class="phone" href="tel:8817167823">
+            📞 8817167823
+        </a>
+
+        <br>
+
+        <a class="instagram"
+           href="https://instagram.com/hariom_x_98"
+           target="_blank">
+            📸 Instagram — @hariom_x_98
+        </a>
+
+        <br>
+
+        <a class="btn" href="tel:8817167823">
+            Call Me
+        </a>
+
+    </div>
+
+</section>
+
+
+<footer>
+    © 2026 HORREX — Designed by Hariom Dhurve
+</footer>
+
+</body>
+</html>
