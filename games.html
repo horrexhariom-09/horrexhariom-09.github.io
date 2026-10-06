@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HORREX Games</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#020617,#061a36,#00111f);
+    color:white;
+    text-align:center;
+}
+
+header{
+    padding:45px 20px 25px;
+}
+
+.logo{
+    font-size:42px;
+    font-weight:bold;
+    color:#19b5ff;
+    text-shadow:0 0 20px #19b5ff;
+}
+
+.subtitle{
+    margin-top:10px;
+    color:#b8dfff;
+    font-size:17px;
+}
+
+.games{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+    max-width:850px;
+    margin:35px auto;
+    padding:20px;
+}
+
+.card{
+    background:rgba(10,30,55,.85);
+    border:1px solid #168cff;
+    border-radius:20px;
+    padding:35px 20px;
+    box-shadow:0 0 25px rgba(0,150,255,.25);
+}
+
+.icon{
+    font-size:65px;
+    margin-bottom:15px;
+}
+
+h2{
+    color:#24b8ff;
+    margin-bottom:12px;
+}
+
+p{
+    color:#c9e5ff;
+    line-height:1.5;
+    margin-bottom:25px;
+}
+
+.btn{
+    display:inline-block;
+    padding:14px 25px;
+    border-radius:12px;
+    background:#0798ff;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    box-shadow:0 0 15px rgba(0,160,255,.6);
+}
+
+.btn:hover{
+    background:#00c3ff;
+}
+
+.back{
+    display:inline-block;
+    margin:10px 0 35px;
+    color:#8ed8ff;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">HORREX</div>
+    <div class="subtitle">🎮 Gaming Zone</div>
+</header>
+
+<div class="games">
+
+    <div class="card">
+        <div class="icon">🐍</div>
+        <h2>Python Coding Game</h2>
+        <p>
+            Test your Python skills with coding challenges,
+            questions, score and levels.
+        </p>
+        <a class="btn" href="python-game.html">
+            PLAY PYTHON GAME
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="icon">🏎️</div>
+        <h2>HORREX Car Racing</h2>
+        <p>
+            Drive your car, avoid traffic and complete
+            your driving missions.
+        </p>
+        <a class="btn" href="car-racing.html">
+            PLAY CAR GAME
+        </a>
+    </div>
+
+</div>
+
+<a class="back" href="index.html">← Back to Website</a>
+
+</body>
+</html>
