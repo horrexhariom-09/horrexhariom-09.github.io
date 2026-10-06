@@ -41,7 +41,7 @@ header{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:25px;
-    max-width:850px;
+    max-width:1000px;
     margin:35px auto;
     padding:20px;
 }
@@ -52,6 +52,12 @@ header{
     border-radius:20px;
     padding:35px 20px;
     box-shadow:0 0 25px rgba(0,150,255,.25);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-7px);
+    box-shadow:0 0 35px rgba(0,180,255,.5);
 }
 
 .icon{
@@ -79,10 +85,12 @@ p{
     text-decoration:none;
     font-weight:bold;
     box-shadow:0 0 15px rgba(0,160,255,.6);
+    transition:0.3s;
 }
 
 .btn:hover{
     background:#00c3ff;
+    transform:scale(1.05);
 }
 
 .back{
@@ -90,6 +98,26 @@ p{
     margin:10px 0 35px;
     color:#8ed8ff;
     text-decoration:none;
+}
+
+.back:hover{
+    color:white;
+}
+
+@media(max-width:600px){
+
+    .logo{
+        font-size:36px;
+    }
+
+    .games{
+        grid-template-columns:1fr;
+        padding:15px;
+    }
+
+    .card{
+        padding:30px 18px;
+    }
 }
 </style>
 </head>
@@ -103,33 +131,68 @@ p{
 
 <div class="games">
 
+    <!-- PYTHON GAME -->
     <div class="card">
+
         <div class="icon">🐍</div>
+
         <h2>Python Coding Game</h2>
+
         <p>
             Test your Python skills with coding challenges,
             questions, score and levels.
         </p>
+
         <a class="btn" href="python-game.html">
             PLAY PYTHON GAME
         </a>
+
     </div>
 
+
+    <!-- CAR RACING GAME -->
     <div class="card">
+
         <div class="icon">🏎️</div>
+
         <h2>HORREX Car Racing</h2>
+
         <p>
             Drive your car, avoid traffic and complete
             your driving missions.
         </p>
+
         <a class="btn" href="car-racing.html">
             PLAY CAR GAME
         </a>
+
+    </div>
+
+
+    <!-- NUMBER GUESSING GAME -->
+    <div class="card">
+
+        <div class="icon">🎯</div>
+
+        <h2>Number Guessing Game</h2>
+
+        <p>
+            Guess the hidden number between 1 and 100.
+            Use hints and try to get the highest score.
+        </p>
+
+        <a class="btn" href="number-guessing.html">
+            PLAY GUESSING GAME
+        </a>
+
     </div>
 
 </div>
 
-<a class="back" href="index.html">← Back to Website</a>
+
+<a class="back" href="index.html">
+    ← Back to Website
+</a>
 
 </body>
 </html>
