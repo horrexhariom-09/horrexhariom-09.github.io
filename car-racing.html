@@ -1,0 +1,1150 @@
+k<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>HORREX Driving</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#06101c;
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow:hidden;
+    touch-action:none;
+}
+
+#app{
+    width:100%;
+    max-width:720px;
+    height:100vh;
+    margin:auto;
+    position:relative;
+    overflow:hidden;
+}
+
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
+    background:#87c9ef;
+}
+
+/* HUD */
+
+.hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+    display:flex;
+    justify-content:space-between;
+    gap:6px;
+    z-index:5;
+}
+
+.box{
+    background:rgba(3,10,20,.80);
+    border:1px solid #1ca7ff;
+    border-radius:10px;
+    padding:7px 9px;
+    text-align:center;
+    min-width:75px;
+}
+
+.box small{
+    display:block;
+    color:#83cfff;
+    font-size:9px;
+}
+
+.box b{
+    font-size:15px;
+}
+
+/* Controls */
+
+.controls{
+    position:absolute;
+    left:12px;
+    right:12px;
+    bottom:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    z-index:6;
+}
+
+.row{
+    display:flex;
+    gap:10px;
+}
+
+.btn{
+    width:68px;
+    height:58px;
+    border:1px solid #39b8ff;
+    border-radius:15px;
+    background:rgba(2,13,28,.85);
+    color:white;
+    font-size:23px;
+    font-weight:bold;
+}
+
+.btn:active{
+    transform:scale(.94);
+}
+
+.pedal{
+    width:78px;
+    font-size:12px;
+}
+
+.gas{
+    border-color:#42e3a4;
+}
+
+/* Start Screen */
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(2,7,15,.65);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+}
+
+.card{
+    width:88%;
+    max-width:430px;
+    background:rgba(4,14,29,.95);
+    border:1px solid #1ca7ff;
+    border-radius:22px;
+    padding:28px;
+    text-align:center;
+    box-shadow:0 0 35px rgba(0,150,255,.25);
+}
+
+.logo{
+    font-size:35px;
+    font-weight:900;
+    letter-spacing:5px;
+    color:#45c7ff;
+}
+
+.card h2{
+    margin:8px 0;
+}
+
+.card p{
+    color:#afd0e8;
+    line-height:1.5;
+}
+
+.start{
+    padding:13px 26px;
+    border:0;
+    border-radius:12px;
+    background:#119df5;
+    color:white;
+    font-size:17px;
+    font-weight:800;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<canvas id="game" width="720" height="1100"></canvas>
+
+<!-- HUD -->
+
+<div class="hud">
+
+<div class="box">
+<small>MISSION</small>
+<b id="mission">1</b>
+</div>
+
+<div class="box">
+<small>SPEED</small>
+<b id="speed">0</b>
+</div>
+
+<div class="box">
+<small>SCORE</small>
+<b id="score">0</b>
+</div>
+
+<div class="box">
+<small>FUEL</small>
+<b id="fuel">100%</b>
+</div>
+
+</div>
+
+<!-- Controls -->
+
+<div class="controls">
+
+<div class="row">
+<button class="btn" id="left">◀</button>
+<button class="btn" id="right">▶</button>
+</div>
+
+<div class="row">
+<button class="btn pedal" id="brake">BRAKE</button>
+<button class="btn pedal gas" id="gas">GAS</button>
+</div>
+
+</div>
+
+<!-- Start / Game Over -->
+
+<div class="overlay" id="overlay">
+
+<div class="card">
+
+<div class="logo">HORREX</div>
+
+<h2 id="title">
+CITY DRIVE
+</h2>
+
+<p id="message">
+Mission 1: Reach the checkpoint
+while avoiding traffic.
+</p>
+
+<button class="start" id="start">
+START DRIVE
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const canvas =
+document.getElementById("game");
+
+const ctx =
+canvas.getContext("2d");
+
+const W = canvas.width;
+const H = canvas.height;
+
+
+/* GAME VARIABLES */
+
+let running = false;
+
+let last = 0;
+
+let score = 0;
+
+let fuel = 100;
+
+let mission = 1;
+
+let distance = 0;
+
+let speed = 0;
+
+let gas = false;
+
+let brake = false;
+
+let playerX = W / 2;
+
+let roadOffset = 0;
+
+let traffic = [];
+
+
+/* ROAD LANES */
+
+const lanes = [
+    -120,
+    0,
+    120
+];
+
+
+/* RESET GAME */
+
+function reset(){
+
+    score = 0;
+
+    fuel = 100;
+
+    distance = 0;
+
+    speed = 0;
+
+    playerX = W / 2;
+
+    roadOffset = 0;
+
+    traffic = [];
+
+
+    for(let i=0;i<7;i++){
+
+        traffic.push({
+
+            lane:Math.floor(Math.random()*3),
+
+            y:-150-i*230,
+
+            speed:1+Math.random(),
+
+            color:[
+                "#e94f64",
+                "#ffd24a",
+                "#9065ff",
+                "#36d89b"
+            ][i%4]
+
+        });
+
+    }
+
+}
+
+
+/* DRAW WORLD */
+
+function drawWorld(){
+
+    /* SKY */
+
+    let sky =
+    ctx.createLinearGradient(
+        0,0,0,H
+    );
+
+    sky.addColorStop(
+        0,
+        "#79cbed"
+    );
+
+    sky.addColorStop(
+        .42,
+        "#cbeaf5"
+    );
+
+    sky.addColorStop(
+        .43,
+        "#6da45c"
+    );
+
+    sky.addColorStop(
+        1,
+        "#417d46"
+    );
+
+    ctx.fillStyle = sky;
+
+    ctx.fillRect(
+        0,0,W,H
+    );
+
+
+    /* ROAD */
+
+    ctx.fillStyle =
+    "#575b60";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W*.25,
+        0
+    );
+
+    ctx.lineTo(
+        W*.75,
+        0
+    );
+
+    ctx.lineTo(
+        W,
+        H
+    );
+
+    ctx.lineTo(
+        0,
+        H
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    /* ROAD SIDES */
+
+    ctx.strokeStyle =
+    "#ffffff";
+
+    ctx.lineWidth = 7;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        W*.25,
+        0
+    );
+
+    ctx.lineTo(
+        0,
+        H
+    );
+
+    ctx.moveTo(
+        W*.75,
+        0
+    );
+
+    ctx.lineTo(
+        W,
+        H
+    );
+
+    ctx.stroke();
+
+
+    /* LANE MARKINGS */
+
+    for(
+        let lane of [-.333,0,.333]
+    ){
+
+        for(
+            let y = roadOffset%180-180;
+            y < H;
+            y += 180
+        ){
+
+            let x =
+            W/2 +
+            lane *
+            (260 + 100*y/H);
+
+            ctx.strokeStyle =
+            "#fffbdc";
+
+            ctx.lineWidth = 5;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                x,
+                y
+            );
+
+            ctx.lineTo(
+                x,
+                y+75
+            );
+
+            ctx.stroke();
+
+        }
+
+    }
+
+
+    /* TREES */
+
+    for(let i=0;i<18;i++){
+
+        let y =
+        (i*135 + roadOffset*1.15)
+        % H;
+
+        let side =
+        i%2 ? -1 : 1;
+
+        let x =
+        side < 0
+        ?
+        70 + y/H*70
+        :
+        W-70-y/H*70;
+
+
+        ctx.fillStyle =
+        "#71492c";
+
+        ctx.fillRect(
+            x-5,
+            y,
+            10,
+            35
+        );
+
+
+        ctx.fillStyle =
+        "#287b3c";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y-8,
+            25,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+
+}
+
+
+/* DRAW CAR */
+
+function car(
+    x,
+    y,
+    width,
+    height,
+    color
+){
+
+    ctx.save();
+
+    ctx.translate(
+        x,
+        y
+    );
+
+
+    ctx.fillStyle =
+    color;
+
+    ctx.shadowBlur =
+    8;
+
+    ctx.shadowColor =
+    color;
+
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        -width/2,
+        -height/2,
+        width,
+        height,
+        11
+    );
+
+    ctx.fill();
+
+
+    ctx.shadowBlur = 0;
+
+
+    /* WINDOW */
+
+    ctx.fillStyle =
+    "#122131";
+
+    ctx.fillRect(
+        -width*.30,
+        -height*.23,
+        width*.60,
+        height*.28
+    );
+
+
+    /* FRONT LIGHT */
+
+    ctx.fillStyle =
+    "#e5f8ff";
+
+    ctx.fillRect(
+        -width*.34,
+        -height*.39,
+        width*.68,
+        5
+    );
+
+
+    /* TAIL LIGHT */
+
+    ctx.fillStyle =
+    "#ff304e";
+
+    ctx.fillRect(
+        -width*.34,
+        height*.31,
+        width*.20,
+        6
+    );
+
+    ctx.fillRect(
+        width*.14,
+        height*.31,
+        width*.20,
+        6
+    );
+
+
+    ctx.restore();
+
+}
+
+
+/* DRAW EVERYTHING */
+
+function draw(){
+
+    drawWorld();
+
+
+    /* TRAFFIC */
+
+    for(
+        const carData of traffic
+    ){
+
+        car(
+            W/2 +
+            lanes[carData.lane],
+
+            carData.y,
+
+            62,
+            110,
+
+            carData.color
+        );
+
+    }
+
+
+    /* PLAYER */
+
+    car(
+        playerX,
+        H-175,
+        70,
+        128,
+
+        "#10aaff"
+    );
+
+
+    /* HUD */
+
+    document.getElementById(
+        "mission"
+    ).textContent =
+    mission;
+
+
+    document.getElementById(
+        "speed"
+    ).textContent =
+    Math.round(speed*15)
+    + " KM/H";
+
+
+    document.getElementById(
+        "score"
+    ).textContent =
+    score;
+
+
+    document.getElementById(
+        "fuel"
+    ).textContent =
+    Math.round(fuel)
+    + "%";
+
+}
+
+
+/* STEERING */
+
+function steer(amount){
+
+    if(!running)
+        return;
+
+    playerX =
+    Math.max(
+        W*.29,
+        Math.min(
+            W*.71,
+            playerX + amount
+        )
+    );
+
+}
+
+
+/* CRASH */
+
+function crash(){
+
+    running = false;
+
+    gas = false;
+
+    brake = false;
+
+
+    document.getElementById(
+        "title"
+    ).textContent =
+    "💥 CRASH";
+
+
+    document.getElementById(
+        "message"
+    ).innerHTML =
+    "Traffic collision!<br>" +
+    "Score: <b>" +
+    score +
+    "</b>";
+
+
+    document.getElementById(
+        "start"
+    ).textContent =
+    "TRY AGAIN";
+
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+    "flex";
+
+}
+
+
+/* MISSION COMPLETE */
+
+function missionComplete(){
+
+    running = false;
+
+    mission++;
+
+
+    document.getElementById(
+        "title"
+    ).textContent =
+    "🏁 MISSION COMPLETE";
+
+
+    document.getElementById(
+        "message"
+    ).textContent =
+    "Excellent driving! Ready for the next mission?";
+
+
+    document.getElementById(
+        "start"
+    ).textContent =
+    "NEXT MISSION";
+
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+    "flex";
+
+}
+
+
+/* GAME LOOP */
+
+function loop(time){
+
+    if(!running)
+        return;
+
+
+    let dt =
+    Math.min(
+        2,
+        (time-last)/16.67 || 1
+    );
+
+    last = time;
+
+
+    /* SPEED */
+
+    let target =
+    gas
+    ?
+    8
+    :
+    2.5;
+
+
+    if(brake)
+        target = 1;
+
+
+    speed +=
+    (target-speed)
+    * .08
+    * dt;
+
+
+    /* FUEL */
+
+    fuel -=
+    (gas ? .024 : .004)
+    * dt;
+
+
+    if(fuel <= 0){
+
+        fuel = 0;
+
+        running = false;
+
+
+        document.getElementById(
+            "title"
+        ).textContent =
+        "⛽ OUT OF FUEL";
+
+
+        document.getElementById(
+            "message"
+        ).textContent =
+        "Mission failed. Restart and try again.";
+
+
+        document.getElementById(
+            "start"
+        ).textContent =
+        "RESTART";
+
+
+        document.getElementById(
+            "overlay"
+        ).style.display =
+        "flex";
+
+
+        draw();
+
+        return;
+
+    }
+
+
+    /* ROAD */
+
+    roadOffset +=
+    speed * dt;
+
+
+    /* SCORE */
+
+    score +=
+    Math.floor(
+        speed*dt*.25
+    );
+
+
+    /* DISTANCE */
+
+    distance +=
+    speed*dt*.04;
+
+
+    /* TRAFFIC */
+
+    for(
+        const enemy of traffic
+    ){
+
+        enemy.y +=
+        speed *
+        dt *
+        (.55 + enemy.speed*.12);
+
+
+        /* Respawn */
+
+        if(
+            enemy.y >
+            H + 150
+        ){
+
+            enemy.y =
+            -150 -
+            Math.random()*300;
+
+            enemy.lane =
+            Math.floor(
+                Math.random()*3
+            );
+
+            score += 50;
+
+        }
+
+
+        /* Collision */
+
+        let enemyX =
+        W/2 +
+        lanes[enemy.lane];
+
+
+        if(
+            Math.abs(
+                enemyX-playerX
+            ) < 52 &&
+
+            Math.abs(
+                enemy.y-(H-175)
+            ) < 85
+        ){
+
+            crash();
+
+            return;
+
+        }
+
+    }
+
+
+    /* CHECKPOINT */
+
+    if(
+        distance > 1200
+    ){
+
+        missionComplete();
+
+        return;
+
+    }
+
+
+    draw();
+
+    requestAnimationFrame(
+        loop
+    );
+
+}
+
+
+/* BUTTON CONTROLS */
+
+document.getElementById(
+    "left"
+).onpointerdown =
+() => steer(-45);
+
+
+document.getElementById(
+    "right"
+).onpointerdown =
+() => steer(45);
+
+
+/* GAS */
+
+document.getElementById(
+    "gas"
+).onpointerdown =
+() => gas = true;
+
+document.getElementById(
+    "gas"
+).onpointerup =
+() => gas = false;
+
+document.getElementById(
+    "gas"
+).onpointercancel =
+() => gas = false;
+
+
+/* BRAKE */
+
+document.getElementById(
+    "brake"
+).onpointerdown =
+() => brake = true;
+
+document.getElementById(
+    "brake"
+).onpointerup =
+() => brake = false;
+
+document.getElementById(
+    "brake"
+).onpointercancel =
+() => brake = false;
+
+
+/* KEYBOARD */
+
+document.addEventListener(
+    "keydown",
+    e => {
+
+        if(
+            e.key === "ArrowLeft" ||
+            e.key.toLowerCase() === "a"
+        )
+            steer(-45);
+
+
+        if(
+            e.key === "ArrowRight" ||
+            e.key.toLowerCase() === "d"
+        )
+            steer(45);
+
+
+        if(
+            e.key === "ArrowUp" ||
+            e.key.toLowerCase() === "w"
+        )
+            gas = true;
+
+
+        if(
+            e.key === "ArrowDown" ||
+            e.key.toLowerCase() === "s"
+        )
+            brake = true;
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    e => {
+
+        if(
+            e.key === "ArrowUp" ||
+            e.key.toLowerCase() === "w"
+        )
+            gas = false;
+
+
+        if(
+            e.key === "ArrowDown" ||
+            e.key.toLowerCase() === "s"
+        )
+            brake = false;
+
+    }
+);
+
+
+/* SWIPE */
+
+let startX = 0;
+
+
+canvas.addEventListener(
+    "pointerdown",
+    e => {
+        startX = e.clientX;
+    }
+);
+
+
+canvas.addEventListener(
+    "pointerup",
+    e => {
+
+        let difference =
+        e.clientX-startX;
+
+
+        if(
+            Math.abs(difference) > 30
+        ){
+
+            steer(
+                difference > 0
+                ? 45
+                : -45
+            );
+
+        }
+
+    }
+);
+
+
+/* START BUTTON */
+
+document.getElementById(
+    "start"
+).onclick = () => {
+
+    reset();
+
+    running = true;
+
+    document.getElementById(
+        "overlay"
+    ).style.display =
+    "none";
+
+
+    last =
+    performance.now();
+
+
+    draw();
+
+    requestAnimationFrame(
+        loop
+    );
+
+};
+
+
+/* INITIAL */
+
+reset();
+
+draw();
+
+</script>
+
+</body>
+</html>
