@@ -289,22 +289,79 @@ footer{
         font-size:32px;
     }
 }
+.premium-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 6%;
+    background: rgba(5, 15, 35, 0.95);
+    border-bottom: 1px solid #00b7ff;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.nav-logo {
+    color: #00b7ff;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #00d9ff;
+    background: rgba(0, 183, 255, 0.15);
+}
+
+.games-link {
+    border: 1px solid #00b7ff;
+}
+
+@media (max-width: 700px) {
+    .premium-nav {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .nav-links {
+        justify-content: center;
+    }
+
+    .nav-links a {
+        font-size: 11px;
+        padding: 7px 8px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<nav>
+<nav class="premium-nav">
     <div class="nav-logo">⚡ HORREX</div>
 
-    <div>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-    </div>
-<a href="games.html">🎮 GAMES</a>
+    <div class="nav-links">
+        <a href="#home">HOME</a>
+        <a href="#about">ABOUT</a>
+        <a href="#skills">SKILLS</a>
+        <a href="#projects">PROJECTS</a>
+        <a href="#contact">CONTACT</a>
+        <a href="games.html" class="games-link">🎮 GAMES</a>
+    </div> 
 </nav>
 
 <section class="hero" id="home">
