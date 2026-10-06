@@ -1,1 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HORREX Number Guessing Game</title>
 
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%,#063b91 0%,transparent 35%),
+        radial-gradient(circle at 80% 30%,#001f5c 0%,transparent 35%),
+        linear-gradient(135deg,#020617,#001b44,#003b80);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.game{
+    width:100%;
+    max-width:500px;
+    padding:35px 25px;
+    text-align:center;
+    background:rgba(3,20,50,.92);
+    border:1px solid #08a9ff;
+    border-radius:25px;
+    box-shadow:0 0 40px rgba(0,170,255,.35);
+}
+
+.logo{
+    font-size:38px;
+    font-weight:bold;
+    color:#19b5ff;
+    text-shadow:0 0 20px #19b5ff;
+}
+
+.subtitle{
+    margin-top:8px;
+    color:#b9ddff;
+}
+
+.icon{
+    font-size:70px;
+    margin:25px 0 10px;
+}
+
+h1{
+    color:#24b8ff;
+    margin-bottom:12px;
+}
+
+.info{
+    color:#c9e5ff;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.input-box{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:2px solid #087cff;
+    background:#061a36;
+    color:white;
+    font-size:20px;
+    text-align:center;
+    outline:none;
+}
+
+.btn{
+    width:100%;
+    padding:15px;
+    margin-top:15px;
+    border:0;
+    border-radius:12px;
+    background:#0798ff;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#00c3ff;
+}
+
+.new-game{
+    background:#075dba;
+}
+
+.message{
+    min-height:55px;
+    margin:20px 0 10px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(0,130,255,.12);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:20px;
+}
+
+.stat{
+    padding:15px;
+    border-radius:12px;
+    background:rgba(0,100,200,.12);
+    border:1px solid #075dba;
+}
+
+.stat span{
+    display:block;
+    color:#9acfff;
+    font-size:14px;
+    margin-bottom:5px;
+}
+
+.stat strong{
+    color:#00d9ff;
+    font-size:22px;
+}
+
+.back{
+    display:inline-block;
+    margin-top:25px;
+    color:#8ed8ff;
+    text-decoration:none;
+}
+
+@media(max-width:500px){
+    .game{
+        padding:28px 18px;
+    }
+
+    .logo{
+        font-size:32px;
+    }
+
+    .icon{
+        font-size:60px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <div class="logo">⚡ HORREX</div>
+
+    <div class="subtitle">
+        🎯 Number Guessing Game
+    </div>
+
+    <div class="icon">🎯</div>
+
+    <h1>Guess the Number</h1>
+
+    <p class="info">
+        I have selected a number between <b>1 and 100</b>.
+        Can you guess it?
+    </p>
+
+    <input
+        type="number"
+        id="guessInput"
+        class="input-box"
+        min="1"
+        max="100"
+        placeholder="Enter 1 - 100"
+    >
+
+    <button class="btn" id="guessBtn">
+        🎯 CHECK NUMBER
+    </button>
+
+    <div class="message" id="message">
+        Start guessing! 🚀
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <span>Attempts</span>
+            <strong id="attempts">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Score</span>
+            <strong id="score">100</strong>
+        </div>
+
+    </div>
+
+    <button class="btn new-game" id="newGameBtn">
+        🔄 NEW GAME
+    </button>
+
+    <a class="back" href="games.html">
+        ← Back to Games
+    </a>
+
+</div>
+
+<script>
+
+let secretNumber;
+let attempts;
+let score;
+let gameOver = false;
+
+const guessInput = document.getElementById("guessInput");
+const guessBtn = document.getElementById("guessBtn");
+const newGameBtn = document.getElementById("newGameBtn");
+const message = document.getElementById("message");
+const attemptsDisplay = document.getElementById("attempts");
+const scoreDisplay = document.getElementById("score");
+
+function startGame(){
+
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+
+    attempts = 0;
+    score = 100;
+    gameOver = false;
+
+    attemptsDisplay.textContent = attempts;
+    scoreDisplay.textContent = score;
+
+    message.textContent = "Start guessing! 🚀";
+
+    guessInput.value = "";
+
+    guessInput.disabled = false;
+    guessBtn.disabled = false;
+
+    guessInput.focus();
+}
+
+function checkGuess(){
+
+    if(gameOver){
+        return;
+    }
+
+    const guess = Number(guessInput.value);
+
+    if(
+        guess < 1 ||
+        guess > 100 ||
+        !Number.isInteger(guess)
+    ){
+        message.textContent =
+            "⚠️ Please enter a number between 1 and 100.";
+        return;
+    }
+
+    attempts++;
+
+    attemptsDisplay.textContent = attempts;
+
+    if(guess === secretNumber){
+
+        score = Math.max(score,10);
+
+        scoreDisplay.textContent = score;
+
+        message.textContent =
+            "🎉 Correct! You guessed the number " +
+            secretNumber +
+            " in " +
+            attempts +
+            " attempts! 🏆";
+
+        gameOver = true;
+
+        guessInput.disabled = true;
+        guessBtn.disabled = true;
+
+        return;
+    }
+
+    score = Math.max(score - 10,0);
+
+    scoreDisplay.textContent = score;
+
+    if(guess < secretNumber){
+
+        message.textContent =
+            "⬆️ Too Low! Try a higher number.";
+
+    }else{
+
+        message.textContent =
+            "⬇️ Too High! Try a lower number.";
+    }
+
+    guessInput.value = "";
+    guessInput.focus();
+}
+
+guessBtn.addEventListener("click",checkGuess);
+
+newGameBtn.addEventListener("click",startGame);
+
+guessInput.addEventListener("keydown",function(event){
+
+    if(event.key === "Enter"){
+        checkGuess();
+    }
+
+});
+
+startGame();
+
+</script>
+
+</body>
+</html>
