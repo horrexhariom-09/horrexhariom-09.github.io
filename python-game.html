@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HORREX | Python Challenge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#020b1c;color:#eef6ff;min-height:100vh;
+  background-image:radial-gradient(circle at 15% 10%,#083b75 0,transparent 30%),
+                   radial-gradient(circle at 85% 80%,#062d5c 0,transparent 32%);
+}
+.container{width:min(1050px,94%);margin:auto;padding:22px 0 50px}
+header{
+  display:flex;justify-content:space-between;align-items:center;gap:15px;
+  padding:15px 0 25px;border-bottom:1px solid #174a78;margin-bottom:25px
+}
+.logo{font-size:30px;font-weight:900;letter-spacing:5px;color:#59c7ff}
+.logo span{color:#fff}
+.badge{padding:8px 12px;border:1px solid #227fc0;border-radius:20px;color:#8bdcff;font-size:13px}
+.hero{text-align:center;margin:15px 0 25px}
+.hero h1{font-size:clamp(30px,6vw,55px);margin-bottom:8px}
+.hero h1 span{color:#4fc3ff}
+.hero p{color:#9eb6cc}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat,.card{
+  background:rgba(6,24,48,.88);border:1px solid #145083;border-radius:16px;
+  padding:17px;box-shadow:0 8px 25px rgba(0,0,0,.2)
+}
+.stat{text-align:center}
+.stat b{display:block;font-size:25px;color:#61d0ff;margin-bottom:4px}
+.stat small{color:#91a9bd}
+.progress{height:9px;background:#09223e;border-radius:10px;overflow:hidden;margin:12px 0 24px}
+.progress i{display:block;height:100%;width:0;background:#43bfff;transition:.3s}
+.card h2{font-size:21px;margin-bottom:12px}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#9db6cb;font-size:13px;margin-bottom:12px}
+.question{font-size:19px;line-height:1.55;margin-bottom:15px}
+.options{display:grid;gap:10px}
+button{
+  border:0;border-radius:11px;padding:12px 15px;font-size:15px;font-weight:700;
+  cursor:pointer;transition:.2s
+}
+.option{background:#0a2b4b;color:#eaf7ff;border:1px solid #1d5d8b;text-align:left}
+.option:hover{background:#0e3c66}
+.option.correct{background:#075d3c;border-color:#20d58b}
+.option.wrong{background:#67252c;border-color:#ff6673}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.primary{background:#35b9ff;color:#02111f}
+.secondary{background:#123a5e;color:#dff4ff;border:1px solid #2674a7}
+.danger{background:#69232c;color:#fff}
+.hidden{display:none!important}
+.editor{
+  width:100%;min-height:260px;resize:vertical;background:#010814;color:#d8f3ff;
+  border:1px solid #216b9c;border-radius:12px;padding:15px;
+  font:14px/1.55 "Courier New",monospace;outline:none
+}
+.editor:focus{border-color:#55caff;box-shadow:0 0 0 2px rgba(75,194,255,.15)}
+.hint{color:#91abc0;font-size:13px;margin-top:8px;line-height:1.5}
+.result{margin-top:13px;padding:13px;border-radius:10px;line-height:1.5}
+.good{background:#073d2d;border:1px solid #18b979}
+.bad{background:#481e26;border:1px solid #ed5264}
+select,input{
+  background:#071d34;color:white;border:1px solid #1d5d8b;border-radius:9px;
+  padding:10px
+}
+#timer{color:#ffcf5a}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:9px;border-bottom:1px solid #163c5c;text-align:left;font-size:14px}
+footer{text-align:center;color:#6f899d;margin-top:28px;font-size:13px}
+@media(max-width:650px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ header{align-items:flex-start;flex-direction:column}
+ .card{padding:14px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="logo">HORREX<span>.</span></div>
+  <div class="badge">🐍 Python Challenge</div>
+</header>
+
+<section class="hero">
+  <h1>Python <span>Challenge</span></h1>
+  <p>Think • Code • Solve • Score</p>
+</section>
+
+<div class="stats">
+  <div class="stat"><b id="score">0</b><small>Score</small></div>
+  <div class="stat"><b id="done">0</b><small>Completed</small></div>
+  <div class="stat"><b id="streak">0</b><small>Streak</small></div>
+  <div class="stat"><b id="timer">--</b><small>Time</small></div>
+</div>
+<div class="progress"><i id="bar"></i></div>
+
+<section id="game" class="card">
+  <div class="meta">
+    <span id="type">Challenge</span>
+    <span id="difficulty">Easy</span>
+    <span id="count">1 / 20</span>
+  </div>
+  <h2 id="title"></h2>
+  <div id="question" class="question"></div>
+  <div id="content"></div>
+  <div class="actions">
+    <button id="submit" class="primary">Submit Answer</button>
+    <button id="hintBtn" class="secondary">💡 Hint</button>
+    <button id="next" class="primary hidden">Next Challenge →</button>
+  </div>
+  <div id="hint" class="hint hidden"></div>
+  <div id="result"></div>
+</section>
+
+<section id="final" class="card hidden">
+  <h2>🏆 Challenge Complete!</h2>
+  <div id="finalText" class="question"></div>
+  <table>
+    <tr><th>Score</th><td id="fScore"></td></tr>
+    <tr><th>Challenges</th><td id="fDone"></td></tr>
+    <tr><th>Accuracy</th><td id="fAccuracy"></td></tr>
+    <tr><th>Best Streak</th><td id="fStreak"></td></tr>
+    <tr><th>Rank</th><td id="fRank"></td></tr>
+  </table>
+  <div class="actions">
+    <button class="primary" onclick="location.reload()">🔄 Play Again</button>
+  </div>
+</section>
+
+<footer>HORREX Python Challenge • Created for learning Python</footer>
+</div>
+
+<script>
+const challenges = [
+ {type:"MCQ",diff:"Easy",title:"Number Guessing",q:"Computer has a secret number. Which Python function is commonly used to generate a random integer?",opts:["random.randint()","random.number()","random.int()","rand.integer()"],ans:0,pts:10,hint:"Think about the random module."},
+ {type:"MCQ",diff:"Easy",title:"Output Challenge",q:"What is the output of: print(2 + 3 * 4) ?",opts:["20","14","24","9"],ans:1,pts:10,hint:"Multiplication happens before addition."},
+ {type:"MCQ",diff:"Easy",title:"Even or Odd",q:"Which operator gives the remainder in Python?",opts:["/","//","%","**"],ans:2,pts:10,hint:"It is the modulo operator."},
+ {type:"MCQ",diff:"Easy",title:"Correct Loop",q:"Which loop is commonly used to repeat over a sequence?",opts:["repeat","for","loop","foreach"],ans:1,pts:10,hint:"Python has a 'for' keyword."},
+ {type:"MCQ",diff:"Medium",title:"List",q:"Which creates a Python list?",opts:["x = (1,2,3)","x = [1,2,3]","x = {1,2,3}","x = <1,2,3>"],ans:1,pts:15,hint:"Lists use square brackets."},
+
+ {type:"CODE",diff:"Easy",title:"Even or Odd",q:"Write Python code that prints 'Even' when n = 10 is even, otherwise prints 'Odd'.",tests:["even","odd"],pts:15,hint:"Use the % operator."},
+ {type:"CODE",diff:"Easy",title:"Factorial",q:"Write a Python program to find the factorial of n = 5.",tests:["120"],pts:15,hint:"5! = 5×4×3×2×1."},
+ {type:"CODE",diff:"Easy",title:"Sum of Digits",q:"Write a program that prints the sum of digits of 1234.",tests:["10"],pts:15,hint:"You can use a loop or convert the number to a string."},
+ {type:"CODE",diff:"Easy",title:"Reverse Number",q:"Write a program that prints the reverse of 12345.",tests:["54321"],pts:15,hint:"String slicing [::-1] is one possible method."},
+ {type:"CODE",diff:"Medium",title:"Palindrome Number",q:"Write a program that prints 'Palindrome' for the number 121.",tests:["palindrome"],pts:20,hint:"Compare the number with its reverse."},
+ {type:"CODE",diff:"Medium",title:"Prime Number",q:"Write a program that prints 'Prime' for the number 17.",tests:["prime"],pts:20,hint:"Check divisibility from 2 up to the square root of n."},
+ {type:"CODE",diff:"Medium",title:"Fibonacci",q:"Write a program to print the first 7 Fibonacci numbers starting with 0, 1.",tests:["0 1 1 2 3 5 8","0, 1, 1, 2, 3, 5, 8"],pts:20,hint:"Each next number is the sum of the previous two."},
+ {type:"CODE",diff:"Medium",title:"Star Pattern",q:"Print this pattern using Python for n = 4:\\n*\\n**\\n***\\n****",tests:["*\\n**\\n***\\n****"],pts:20,hint:"Use a loop and multiply the '*' string."},
+ {type:"CODE",diff:"Hard",title:"Armstrong Number",q:"Write a program that prints 'Armstrong' for 153. (1³ + 5³ + 3³ = 153)",tests:["armstrong"],pts:30,hint:"For 153, sum the cubes of its digits."},
+ {type:"CODE",diff:"Hard",title:"Strong Number",q:"Write a program that prints 'Strong' for 145. (1! + 4! + 5! = 145)",tests:["strong"],pts:30,hint:"Find factorial of every digit and add them."},
+ {type:"CODE",diff:"Hard",title:"Perfect Number",q:"Write a program that prints 'Perfect' for 28. Its proper divisors add to 28.",tests:["perfect"],pts:30,hint:"Add divisors smaller than the number."},
+ {type:"CODE",diff:"Medium",title:"Multiplication Table",q:"Print the multiplication table of 5 from 1 to 10.",tests:["5 10 15 20 25 30 35 40 45 50","5\\n10\\n15\\n20\\n25\\n30\\n35\\n40\\n45\\n50"],pts:20,hint:"Use a for loop from 1 to 10."},
+ {type:"CODE",diff:"Easy",title:"Calculator",q:"Write a program that prints the result of 25 + 17.",tests:["42"],pts:15,hint:"Use +."},
+ {type:"CODE",diff:"Medium",title:"Vowels",q:"Write a program that prints the number of vowels in the word 'pythonprogramming'.",tests:["4"],pts:20,hint:"Check each character against aeiou."}
+];
+
+let index=0,score=0,done=0,streak=0,bestStreak=0,answered=false,time=45,timerId=null;
+
+const $=id=>document.getElementById(id);
+function normalize(s){
+ return s.toLowerCase().replace(/\r/g,"").replace(/[ \t]+/g," ").trim();
+}
+function startTimer(){
+ clearInterval(timerId);
+ time=45;$("timer").textContent=time+"s";
+ timerId=setInterval(()=>{
+   time--;$("timer").textContent=time+"s";
+   if(time<=0){clearInterval(timerId); if(!answered) submitAnswer(true);}
+ },1000);
+}
+function render(){
+ answered=false;
+ const c=challenges[index];
+ $("type").textContent=c.type==="MCQ"?"🎯 MCQ":"💻 Code Writing";
+ $("difficulty").textContent="Difficulty: "+c.diff;
+ $("count").textContent=(index+1)+" / "+challenges.length;
+ $("title").textContent=c.title;
+ $("question").textContent=c.q;
+ $("result").innerHTML="";
+ $("hint").classList.add("hidden");$("hint").textContent="💡 "+c.hint;
+ $("next").classList.add("hidden");$("submit").classList.remove("hidden");
+ const content=$("content");content.innerHTML="";
+ if(c.type==="MCQ"){
+   const box=document.createElement("div");box.className="options";
+   c.opts.forEach((o,i)=>{
+     const b=document.createElement("button");b.className="option";b.textContent=String.fromCharCode(65+i)+". "+o;
+     b.onclick=()=>selectOption(i);b.dataset.i=i;box.appendChild(b);
+   });content.appendChild(box);
+ }else{
+   const ta=document.createElement("textarea");ta.className="editor";ta.id="code";
+   ta.placeholder="# Write your Python code here...\n# Example:\nprint('Hello')";
+   content.appendChild(ta);
+ }
+ $("bar").style.width=(index/challenges.length*100)+"%";
+ $("done").textContent=done;$("score").textContent=score;$("streak").textContent=streak;
+ startTimer();
+}
+let selected=-1;
+function selectOption(i){
+ if(answered)return;
+ selected=i;
+ document.querySelectorAll(".option").forEach(b=>b.style.outline="none");
+ const b=document.querySelector('.option[data-i="'+i+'"]');
+ b.style.outline="2px solid #55caff";
+}
+function submitAnswer(timeout=false){
+ if(answered)return;
+ const c=challenges[index];
+ let correct=false;
+ if(c.type==="MCQ"){
+   if(selected<0 && !timeout){showResult("Choose an option first.","bad");return;}
+   correct=selected===c.ans;
+   document.querySelectorAll(".option").forEach((b,i)=>{
+     if(i===c.ans)b.classList.add("correct");
+     if(i===selected && selected!==c.ans)b.classList.add("wrong");
+   });
+ }else{
+   const code=$("code").value;
+   if(!code.trim() && !timeout){showResult("Write some Python code first.","bad");return;}
+   correct=checkCode(code,c);
+ }
+ answered=true;clearInterval(timerId);done++;
+ if(correct){score+=c.pts;streak++;bestStreak=Math.max(bestStreak,streak);
+   showResult("✅ Correct! +"+c.pts+" points","good");
+ }else{score=Math.max(0,score-5);streak=0;showResult(timeout?"⏰ Time up! -5 points":"❌ Not correct. -5 points","bad");}
+ $("score").textContent=score;$("done").textContent=done;$("streak").textContent=streak;
+ $("submit").classList.add("hidden");$("next").classList.remove("hidden");
+}
+function showResult(msg,cls){$("result").innerHTML='<div class="result '+cls+'">'+msg+"</div>";}
+function checkCode(code,c){
+ const s=normalize(code);
+ const lower=s.replace(/\s/g,"");
+ // This is a browser-friendly challenge checker. It checks the submitted
+ // solution for the required result/keywords rather than executing arbitrary Python.
+ for(const t of c.tests){
+   const n=normalize(t);
+   if(s.includes(n))return true;
+ }
+ const patterns={
+  "Even or Odd":/(%|mod|even|odd)/i,
+  "Factorial":/factorial|fact|range|!/i,
+  "Sum of Digits":/sum|digit/i,
+  "Reverse Number":/reverse|\[::-1\]|reversed/i,
+  "Palindrome Number":/palindrome|\[::-1\]/i,
+  "Prime Number":/prime|sqrt|%/i,
+  "Fibonacci":/fibonacci|fib|0.*1.*1.*2.*3.*5.*8/i,
+  "Star Pattern":/\\*|print.*\*/i,
+  "Armstrong Number":/armstrong|cube|digit|pow/i,
+  "Strong Number":/strong|factorial|fact/i,
+  "Perfect Number":/perfect|divisor/i,
+  "Multiplication Table":/range|5|print/i,
+  "Calculator":/25.*17|print/i,
+  "Vowels":/vowel|aeiou/i
+ };
+ return patterns[c.title]?patterns[c.title].test(code):false;
+}
+$("submit").onclick=()=>submitAnswer(false);
+$("hintBtn").onclick=()=>{$("hint").classList.toggle("hidden")};
+$("next").onclick=()=>{
+ index++;
+ if(index>=challenges.length){finish();return}
+ selected=-1;render();
+};
+function finish(){
+ clearInterval(timerId);$("game").classList.add("hidden");$("final").classList.remove("hidden");
+ $("fScore").textContent=score;
+ $("fDone").textContent=done+" / "+challenges.length;
+ $("fAccuracy").textContent=Math.round(done?score/Math.max(1,totalPossible())*100:0)+"%";
+ $("fStreak").textContent=bestStreak;
+ let rank=score>=350?"🐍 Python Master":score>=250?"🔥 Python Pro":score>=160?"⭐ Python Coder":"🌱 Python Beginner";
+ $("fRank").textContent=rank;
+ $("finalText").textContent="Great job! Keep practicing Python and build real projects.";
+ $("bar").style.width="100%";
+}
+function totalPossible(){return challenges.reduce((a,c)=>a+c.pts,0)}
+render();
+</script>
+</body>
+</html>
