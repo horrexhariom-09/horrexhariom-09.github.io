@@ -407,6 +407,79 @@ footer{
         grid-template-columns:1fr;
     }
 }
+    .profile-card{
+    display:flex;
+    align-items:center;
+    gap:40px;
+    padding:40px;
+    background:rgba(0,20,55,.75);
+    border:1px solid #087cff;
+    border-radius:25px;
+    box-shadow:0 0 30px rgba(0,140,255,.2);
+}
+
+.profile-about{
+    width:220px;
+    height:220px;
+    object-fit:cover;
+    border-radius:50%;
+    border:4px solid #008cff;
+    box-shadow:0 0 25px #008cff;
+}
+
+.profile-info{
+    flex:1;
+}
+
+.profile-info h2{
+    color:#00d9ff;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.profile-info h3{
+    color:white;
+    margin-bottom:18px;
+}
+
+.profile-info p{
+    color:#b7c8df;
+    line-height:1.7;
+    margin-bottom:12px;
+}
+
+.profile-details{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:20px;
+}
+
+.profile-details div{
+    padding:13px;
+    background:rgba(0,100,200,.12);
+    border:1px solid #075dba;
+    border-radius:10px;
+    color:#d8ecff;
+}
+
+@media(max-width:700px){
+
+    .profile-card{
+        flex-direction:column;
+        text-align:center;
+        padding:25px 18px;
+    }
+
+    .profile-about{
+        width:180px;
+        height:180px;
+    }
+
+    .profile-details{
+        grid-template-columns:1fr;
+    }
+}
 </style>
 </head>
 
